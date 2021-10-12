@@ -15,3 +15,9 @@ export default function Handle(req, res) {
     break
   }
 }
+
+export const config = {
+  api: {
+    externalResolver: true,
+  },
+}
