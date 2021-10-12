@@ -3,7 +3,7 @@ import UserController from '../../../controllers/UserController'
 export default function Handle(req, res) {
   switch (req.method) {
     case 'GET':
-      UserController.findById(req, res)
+      UserController.findByUsername(req, res)
     break
   
     case 'PUT':
@@ -14,4 +14,10 @@ export default function Handle(req, res) {
       UserController.delete(req, res)
     break
   }
+}
+
+export const config = {
+  api: {
+    externalResolver: true,
+  },
 }
