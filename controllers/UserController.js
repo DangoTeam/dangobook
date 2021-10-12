@@ -5,7 +5,7 @@ class UserController {
     return res.json(await prisma.user.findMany())
   }
 
-  async findById(req, res) {
+  async findByUsername(req, res) {
     const user = await prisma.user.findUnique({
       where: {
         username: req.query.username,
