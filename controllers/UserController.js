@@ -1,75 +1,44 @@
-import { prisma } from '../prisma/client'
+import UserRepository from '../repositories/UserRepository'
 
 class UserController {
   async findAll(req, res) {
-    return res.json(await prisma.user.findMany())
+    const users = await UserRepository.findAll()
+
+    return res.json(users)
   }
 
   async findByUsername(req, res) {
-    const user = await prisma.user.findUnique({
-      where: {
-        username: req.query.username,
-      }
-    })
+    const user = await UserRepository.findByUsername(req.query.username)
 
     if (!user) return res.json({ error: 'user not found' })
 
     return res.json(user)
   }
-  
-  async create(req, res) {
-    if (
-      await prisma.user.findUnique({
-        where: {
-          email: req.body.email,
-        },
-      })
-    )
-      return res.json({ error: 'user already exists' });
 
-    const user = await prisma.user.create({
-      data: req.body
-    })
+  async create(req, res) {
+    if (await UserRepository.findByEmail(req.body.email))
+      return res.json({ error: 'user already exists' })
+
+    const user = await UserRepository.create(req.body)
 
     return res.json(user)
   }
 
   async delete(req, res) {
-    if (
-      !(await prisma.user.findUnique({
-        where: {
-          username: req.query.id
-        },
-      }))
-    ) {
+    if (!(await UserRepository.findByUsername(req.query.username))) {
       return res.json({ error: 'user not found' })
     }
 
-    await prisma.user.delete({
-      where: {
-        username: req.query.id
-      },
-    })
+    await UserRepository.delete(req.query.username)
 
     return res.json({ message: 'ok' })
   }
 
   async update(req, res) {
-    if (
-      !(await prisma.user.findUnique({
-        where: {
-          username: req.query.id
-        },
-      }))
-    )
+    if (!(await UserRepository.findByUsername(req.query.username)))
       return res.json({ error: 'user not found' })
 
-    const user = await prisma.user.update({
-      where: {
-        username: req.query.id
-      },
-      data: req.body
-    })
+    const user = await UserRepository.update(req.query.username, req.body)
 
     return res.json(user)
   }
